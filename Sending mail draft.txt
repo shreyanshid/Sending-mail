@@ -1,0 +1,67 @@
+import java.util.Properties;  
+
+
+import javax.mail.Message;  
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;  
+import javax.mail.Session; 
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;  
+import javax.mail.internet.MimeMessage;  
+import java.io.FileInputStream;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
+public class printing {
+
+
+    public static void main(String[] args) throws Exception {
+    //test file is located in your project path         
+    FileInputStream fileIn = new FileInputStream("C:\\Users\\This PC\\Documents\\BOOK1.xlsx");
+  
+    //read file 
+   /* POIFSFileSystem fs = new POIFSFileSystem(fileIn); */
+    XSSFWorkbook filename = new XSSFWorkbook(fileIn);
+    XSSFSheet sheet = filename.getSheetAt(0);
+    
+     
+    String columnWanted = "Email Id";
+    Integer columnNo = null;
+    //output all not null values to the list
+    List<Cell> cells = new ArrayList<Cell>();
+
+    Row firstRow = sheet.getRow(0);
+
+    for(Cell cell:firstRow){
+        if (cell.getStringCellValue().equals(columnWanted)){
+            columnNo = cell.getColumnIndex();
+        }
+    }
+
+
+    if (columnNo != null){
+    for (Row row : sheet) {
+       Cell c = row.getCell(columnNo);
+       if (c == null) {
+          // Nothing in the cell in this row, skip it
+       } else {
+          cells.add(c);
+          System.out.println(c);
+
+    }
+    }
+    }
+    else{
+        System.out.println("could not find column " + columnWanted + " in first row of " + fileIn.toString());
+    }
+
+    }
+    }

@@ -1,0 +1,91 @@
+import java.util.Properties;
+import javax.mail.Message;  
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;  
+import javax.mail.Session; 
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;  
+import javax.mail.internet.MimeMessage;  
+import java.io.FileInputStream;
+
+import java.util.ArrayList;
+import java.util.List;
+ 
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
+public class ssd {
+
+
+    public static void main(String[] args) throws Exception {
+    //test file is located in your project path         
+    FileInputStream fileIn = new FileInputStream("C:\\Users\\This PC\\Documents\\BOOK1.xlsx");
+  
+  //  read file 
+   // POIFSFileSystem filename = new POIFSFileSystem(fileIn); 
+    XSSFWorkbook filename = new XSSFWorkbook(fileIn);
+    XSSFSheet sheet = filename.getSheetAt(0);
+    Properties props = new Properties(); 
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.smtp.host", "smtp.gmail.com");
+    props.put("mail.smtp.port", "587");
+    
+     
+    Session session = Session.getInstance(props,  
+     new javax.mail.Authenticator() {  
+     protected PasswordAuthentication getPasswordAuthentication() {  
+    return new PasswordAuthentication("shreyanshid17@gmail.com","_password_");//change accordingly  
+     }  
+   }); 
+    
+     
+    String columnWanted = "Email Id";
+    Integer columnNo = null;
+    //output all not null values to the list ssingh200015
+    List<Cell> cells = new ArrayList<Cell>();
+
+    Row firstRow = sheet.getRow(0);
+
+    for(Cell cell:firstRow){
+        if (cell.getStringCellValue().equals(columnWanted)){
+            columnNo = cell.getColumnIndex();
+        }
+    }
+
+
+    if (columnNo != null)
+    {
+    for (Row row : sheet) {
+       Cell c = row.getCell(columnNo);
+       if (c == null) {
+          // Nothing in the cell in this row, skip it
+       } 
+       else {
+          cells.add(c);
+          String to="c";
+          
+         MimeMessage message = new MimeMessage(session);  
+          message.setFrom(new InternetAddress("shreyanshid17@gmail.com"));//change accordingly  
+          message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
+          message.setSubject("THIS IS JUST A TEST NOT A HOAX :-D");  
+          message.setText("Testing.......");  
+            
+          //send message  
+          Transport.send(message);  
+         
+          System.out.println("message sent successfully");  
+          
+          
+       }
+    }
+    }else{
+        System.out.println("could not find column " + columnWanted + " in first row of " + fileIn.toString());
+    }
+
+    }
+}
